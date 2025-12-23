@@ -1,0 +1,20 @@
+{
+    "name": "form-automation-mcp",
+    "version": "1.0.0",
+    "description": "MCP controlled form automation system",
+    "main": "src/index.js",
+    "scripts": {
+        "start": "node src/index.js",
+        "start:mcp": "node src/mcp-runner.js"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^0.6.0",
+        "express": "^4.18.2",
+        "multer": "^2.0.2",
+        "puppeteer": "^21.6.1",
+        "socket.io": "^4.7.2",
+        "uuid": "^9.0.1",
+        "zod": "^3.22.4"
+    },
+    "type": "module"
+}

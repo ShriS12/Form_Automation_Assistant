@@ -1,0 +1,106 @@
+[
+    {
+        "selector": "#firstName",
+        "value": "Mark"
+    },
+    {
+        "selector": "#lastName",
+        "value": "Antony"
+    },
+    {
+        "selector": "#userEmail",
+        "value": "mark.antony@example.com"
+    },
+    {
+        "selector": "label[for='gender-radio-1']",
+        "value": "true"
+    },
+    {
+        "selector": "#userNumber",
+        "value": "1234567890"
+    },
+    {
+        "selector": "#dateOfBirthInput",
+        "value": "15 May 1993"
+    },
+    {
+        "selector": "#subjectsInput",
+        "value": "Computer Science"
+    },
+    {
+        "selector": "label[for='hobbies-checkbox-1']",
+        "value": "true"
+    },
+    {
+        "selector": "#uploadPicture",
+        "value": "file"
+    },
+    {
+        "selector": "#currentAddress",
+        "value": "123 Street"
+    },
+    {
+        "selector": "#state",
+        "value": "NCR"
+    },
+    {
+        "selector": "#city",
+        "value": "Delhi"
+    },
+    {
+        "selector": "#RESULT_TextField-1",
+        "value": "Automation Upgrade"
+    },
+    {
+        "selector": "#RESULT_TextField-3",
+        "value": "New York"
+    },
+    {
+        "selector": "#RESULT_TextField-4",
+        "value": "01/15/2026"
+    },
+    {
+        "selector": "#RESULT_TextArea-5",
+        "value": "Implementing the new automation framework for better efficiency."
+    },
+    {
+        "selector": "#RESULT_FileUpload-6",
+        "value": "file"
+    },
+    {
+        "selector": "#RESULT_TextField-8",
+        "value": "Mark"
+    },
+    {
+        "selector": "#RESULT_TextField-9",
+        "value": "Antony"
+    },
+    {
+        "selector": "#RESULT_TextField-10",
+        "value": "123 Street"
+    },
+    {
+        "selector": "#RESULT_TextField-11",
+        "value": "Suite 500"
+    },
+    {
+        "selector": "#RESULT_TextField-12",
+        "value": "New York"
+    },
+    {
+        "selector": "#RESULT_RadioButton-13",
+        "value": "Radio-31"
+    },
+    {
+        "selector": "#RESULT_TextField-14",
+        "value": "10001"
+    },
+    {
+        "selector": "#RESULT_TextField-15",
+        "value": "8005550199"
+    },
+    {
+        "selector": "#RESULT_TextField-16",
+        "value": "mark.antony@example.com"
+    }
+]

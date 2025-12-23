@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Automation Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Form Automation Dashboard</h1>
+            <p>MCP Controlled Queue System</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <h2>Add New Task</h2>
+                <form id="add-task-form">
+                    <div class="form-group">
+                        <label for="task-url">Form URL</label>
+                        <input type="url" id="task-url" required placeholder="http://localhost:3000/test-form.html">
+                    </div>
+                    <div class="form-group">
+                        <label for="task-file">Form Data JSON File</label>
+                        <input type="file" id="task-file" accept=".json" required>
+                        <p class="help-text">Upload a JSON file containing the form fields.</p>
+                    </div>
+                    <button type="submit" class="btn-primary">Add Task</button>
+                </form>
+            </div>
+
+            <div class="stats-cards">
+                <div class="card">
+                    <h3>Total Tasks</h3>
+                    <span id="total-tasks">0</span>
+                </div>
+                <div class="card">
+                    <h3>Processing</h3>
+                    <span id="processing-tasks">0</span>
+                </div>
+                <div class="card">
+                    <h3>Completed</h3>
+                    <span id="completed-tasks">0</span>
+                </div>
+                <div class="card">
+                    <h3>Failed</h3>
+                    <span id="failed-tasks">0</span>
+                </div>
+            </div>
+
+            <div class="task-list-container">
+                <h2>Task Queue</h2>
+                <table id="task-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>URL</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th>Result/Error</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="task-body">
+                        <!-- Tasks will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <!-- File Upload Modal -->
+    <div id="upload-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Action Required</h2>
+            <p id="upload-message">A task requires a file upload.</p>
+            <form id="file-upload-form">
+                <div class="form-group">
+                    <label for="manual-file">Select File (PDF, JPEG, PNG)</label>
+                    <input type="file" id="manual-file" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary">Upload & Resume</button>
+                    <button type="button" id="cancel-upload" class="btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
