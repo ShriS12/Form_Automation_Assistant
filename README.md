@@ -1,65 +1,82 @@
-# MCP Form Automation System
+# Form Automation System
 
-A Node.js application that automates form filling using a queue-based system controlled entirely through Model Context Protocol (MCP).
+A robust, modernized Node.js application for automating complex web forms. This system features a real-time dashboard, manual intervention for file uploads, and intelligent form-filling logic.
+
+![Architecture Diagram](architecture_diagram.png)
 
 ## Features
 
-- **MCP Controlled**: Add, View, and Delete tasks using MCP tools.
-- **Queue System**: Robust in-memory queue management.
-- **Browser Automation**: Uses Puppeteer to fill forms.
-- **Real-time Dashboard**: View task status at `http://localhost:3000`.
+- **Real-time Dashboard**: 
+  - Modern, responsive UI (`http://localhost:3000`) built with vanilla JS and socket.io.
+  - Live task status updates (Queued, Processing, User Action Required, Completed, Failed).
+  - Ability to delete/cancel active tasks immediately.
+
+- **Intelligent Form Filling**:
+  - **Dynamic Field Recognition**: Automatically acts on text inputs, dropdowns, radios, checkboxes, and React-based components.
+  - **Smart Name Handling**: Combines "First Name" and "Last Name" values if only a "Full Name" field is found.
+
+- **Advanced Workflows**:
+  - **File Upload Intervention**: Detects file inputs and pauses automation, prompting the user via the Dashboard UI to upload the file. Once uploaded, the automation resumes instantly.
+  - **Auto-Submission & Verification**: Automatically detects submit buttons and waits for "Success"/"Thank You" confirmation messages before marking tasks as complete.
+  - **Queue Management**: Reliable in-memory queue. Deleting a task immediately stops the worker and closes the browser instance.
 
 ## Installation
 
-1. Install dependencies:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ShriS12/Form_Automation_Assistant.git
+   cd Form_Automation_Assistant
+   ```
+
+2. Install dependencies:
    ```bash
    npm install
    ```
 
 ## Usage
 
-### 1. Start the Core System
-To run the standalone automation system (Queue + Dashboard + Worker):
+### 1. Start the System
+Run the application to start the server, queue manager, and dashboard:
 ```bash
 npm start
 ```
-- **Dashboard**: `http://localhost:3000`
-- **Worker**: Runs in background
+- **Dashboard**: Open `http://localhost:3000` in your web browser.
 
-### 2. Start with MCP (Optional)
-To run the system with the MCP layer enabled (for AI agents):
-```bash
-npm run start:mcp
+### 2. Submit a Task
+1. In the Dashboard "Add New Task" section:
+2. Enter the **Form URL**.
+3. Upload a **JSON configuration file** defining the data to fill.
+
+**Example `formData.json`:**
+```json
+[
+    { "selector": "#firstName", "value": "John" },
+    { "selector": "#lastName", "value": "Doe" },
+    { "selector": "#email", "value": "john.doe@example.com" },
+    { "selector": "#uploadField", "value": "file" } 
+]
 ```
-This starts everything above plus the MCP Server on Stdio.
+*Note: If a value is set to "file", the system will pause and ask for a file upload.*
 
-### 3. Dashboard Usage
-Open `http://localhost:3000` in your browser.
-- **Add Task**: 
-  - Enter the target URL.
-  - Upload a JSON file containing the form data (see `test-data.json` for format).
-- **Monitor**: Watch the task status update in real-time.
+### 3. File Upload Handling
+If the automation encounters a file input:
+1. The status will change to **WAITING_FOR_FILE**.
+2. A modal will appear on the Dashboard.
+3. Select the file you want to upload and click "Upload & Resume".
+4. The worker will receive the file path, upload it to the form, and continue.
 
-### 4. MCP Tools
-The server exposes the following tools:
+## Architecture
 
-- **`add_task`**: Enqueue a new automation task.
-  - Arguments:
-    - `url`: String (URL of the form)
-    - `formData`: Array of objects `{ selector, value }`
-  
-- **`view_task`**: View task status.
-  - Arguments:
-    - `taskId`: String (optional, returns all if omitted)
-
-- **`delete_task`**: Remove a task.
-  - Arguments:
-    - `taskId`: String
+- **Frontend**: HTML5, CSS3, Vanilla JavaScript.
+- **Backend**: Node.js, Express.
+- **Real-time**: Socket.IO for bidirectional events (logs, status updates).
+- **Automation**: Puppeteer (Headless Chrome).
 
 ## Project Structure
 
-- `src/mcp.js`: MCP Server implementation.
-- `src/queue.js`: Queue management logic.
-- `src/worker.js`: Puppeteer automation worker.
-- `src/server.js`: Web dashboard server.
-- `public/`: Dashboard frontend assets.
+- `src/server.js`: Express server setup and API routes.
+- `src/queue.js`: Core queue logic and state management.
+- `src/worker.js`: Puppeteer automation logic (navigation, filling, submission).
+- `public/`: Dashboard assets (HTML, CSS, JS).
+- `test-data.json`: Sample data for testing.
+
