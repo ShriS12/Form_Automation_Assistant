@@ -80,9 +80,12 @@ If the automation encounters a file input:
 - `test-data.json`: Sample data for testing.
 
 ## Architecture Diagram
+
 <img width="3088" height="822" alt="image" src="https://github.com/user-attachments/assets/cc48fcc8-e827-4159-9255-7c108d2118df" />
 
 ## Application Demo
+
+https://github.com/user-attachments/assets/ff62259c-d593-4d47-8ab7-468a0872a6b0
 
 
 
