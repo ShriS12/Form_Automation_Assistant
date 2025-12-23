@@ -80,3 +80,13 @@ If the automation encounters a file input:
 - `public/`: Dashboard assets (HTML, CSS, JS).
 - `test-data.json`: Sample data for testing.
 
+## Demo Video
+
+[Insert your demo video here. You can drag and drop an .mp4 file into the GitHub editor to upload it, or paste a link to YouTube/Loom.]
+
+## Architecture Diagram
+<img width="3088" height="822" alt="image" src="https://github.com/user-attachments/assets/cc48fcc8-e827-4159-9255-7c108d2118df" />
+
+
+
+
