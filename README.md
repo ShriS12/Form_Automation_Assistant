@@ -87,5 +87,13 @@ If the automation encounters a file input:
 
 https://github.com/user-attachments/assets/ff62259c-d593-4d47-8ab7-468a0872a6b0
 
+## Application Demo : Form-Filling Automation using Claude via MCP
+
+https://github.com/user-attachments/assets/bd7ba12b-c7a9-40ed-9013-ccda2dead657
+
+
+
+
+
 
 
