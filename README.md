@@ -2,7 +2,6 @@
 
 A robust, modernized Node.js application for automating complex web forms. This system features a real-time dashboard, manual intervention for file uploads, and intelligent form-filling logic.
 
-![Architecture Diagram](architecture_diagram.png)
 
 ## Features
 
@@ -79,4 +78,8 @@ If the automation encounters a file input:
 - `src/worker.js`: Puppeteer automation logic (navigation, filling, submission).
 - `public/`: Dashboard assets (HTML, CSS, JS).
 - `test-data.json`: Sample data for testing.
+
+##Architecture Diagram
+<img width="3088" height="822" alt="image" src="https://github.com/user-attachments/assets/cc48fcc8-e827-4159-9255-7c108d2118df" />
+
 
