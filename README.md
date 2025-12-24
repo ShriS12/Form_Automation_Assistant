@@ -92,7 +92,7 @@ https://github.com/user-attachments/assets/ff62259c-d593-4d47-8ab7-468a0872a6b0
 https://github.com/user-attachments/assets/bd7ba12b-c7a9-40ed-9013-ccda2dead657
 
 
-
+**Note:** The UI has been updated and may not exactly match the interface shown in the demo video.
 
 
 
