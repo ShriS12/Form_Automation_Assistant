@@ -23,35 +23,42 @@ function renderTasks() {
         const statusClass = `status-${task.status.toLowerCase()}`;
 
         let resultText = '-';
+        let fullResultText = '-';
+
         if (task.status === 'COMPLETED') {
             resultText = 'Success';
+            fullResultText = 'Success';
         } else if (task.status === 'PARTIAL_SUCCESS') {
             resultText = 'Partial Success';
+            fullResultText = 'Partial Success';
         } else if (task.status === 'FAILED') {
             const err = task.error || 'Failed';
+            fullResultText = err;
             resultText = err.length > 20 ? err.substring(0, 20) + '...' : err;
         }
 
-        const logsHtml = task.logs && task.logs.length > 0
-            ? `<div class="logs-container">${task.logs.map(l => `<div><span class="log-time">${new Date(l.timestamp).toLocaleTimeString()}</span> ${l.message}</div>`).join('')}</div>`
-            : '<span class="text-gray-400">No logs yet</span>';
+        // Prepare Logs for Tooltip
+        let logTooltip = fullResultText;
+        if (task.logs && task.logs.length > 0) {
+            const logsStr = task.logs.map(l => `[${new Date(l.timestamp).toLocaleTimeString()}] ${l.message}`).join('\n');
+            logTooltip = `Status: ${fullResultText}\n\nLogs:\n${logsStr}`;
+        }
+
+        // Safe escape for HTML attributes
+        const escapeAttr = (str) => (str || '').replace(/"/g, '&quot;');
 
         row.innerHTML = `
-            <td class="font-mono text-sm">${task.id.substring(0, 8)}...</td>
-            <td>${task.url}</td>
+            <td class="font-mono text-sm" title="${escapeAttr(task.id)}">${task.id.substring(0, 8)}...</td>
+            <td title="${escapeAttr(task.url)}">${task.url}</td>
             <td><span class="status-badge ${statusClass}">${task.status}</span></td>
             <td>${new Date(task.createdAt).toLocaleTimeString()}</td>
-            <td class="result-cell" title="${resultText}">${resultText}</td>
+            <td class="result-cell" title="${escapeAttr(logTooltip)}">${resultText}</td>
             <td>
                 <button onclick="deleteTask('${task.id}')" class="btn-delete" title="Delete Task">🗑️</button>
             </td>
         `;
 
-        const logRow = document.createElement('tr');
-        logRow.innerHTML = `<td colspan="6" class="log-cell">${logsHtml}</td>`;
-
         taskBody.appendChild(row);
-        taskBody.appendChild(logRow);
     });
     updateStats();
 }
@@ -74,7 +81,6 @@ socket.on('taskUpdated', (updatedTask) => {
 
         // Check if task is waiting for file
         if (updatedTask.status === 'WAITING_FOR_FILE') {
-
             showUploadModal(updatedTask);
         }
     }
@@ -118,6 +124,10 @@ function showUploadModal(task) {
                 alert('File uploaded successfully! Automation should resume.');
                 modal.classList.add('hidden');
                 form.reset();
+                if (manualFileLabel) {
+                    manualFileLabel.innerHTML = manualOriginalLabel;
+                    manualFileLabel.classList.remove('has-file');
+                }
             } else {
                 alert('Upload failed: ' + res.error);
             }
@@ -141,49 +151,95 @@ socket.on('taskProcessing', (task) => {
 const addTaskForm = document.getElementById('add-task-form');
 const urlInput = document.getElementById('task-url');
 const fileInput = document.getElementById('task-file');
+const fileLabel = document.getElementById('file-label-text');
+const originalLabelContent = fileLabel ? fileLabel.innerHTML : 'Choose JSON File';
 
-addTaskForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const url = urlInput.value;
-    const file = fileInput.files[0];
-
-    if (!file) {
-        alert('Please select a file');
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        try {
-            const formData = JSON.parse(e.target.result);
-
-            const response = await fetch('/api/tasks', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ url, formData })
-            });
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to add task');
-            }
-
-            // Clear inputs on success
-            urlInput.value = '';
-            fileInput.value = '';
-
-        } catch (err) {
-            alert('Error adding task: ' + err.message);
+// File Input Interaction
+if (fileInput && fileLabel) {
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            const fileName = e.target.files[0].name;
+            fileLabel.innerHTML = `
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>${fileName}</span>
+            `;
+            fileLabel.classList.add('has-file');
+        } else {
+            fileLabel.innerHTML = originalLabelContent;
+            fileLabel.classList.remove('has-file');
         }
-    };
-    reader.onerror = () => {
-        alert('Error reading file');
-    };
-    reader.readAsText(file);
-});
+    });
+
+    addTaskForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const url = urlInput.value;
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('Please select a file');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const formData = JSON.parse(e.target.result);
+
+                const response = await fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url, formData })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to add task');
+                }
+
+                // Clear inputs on success
+                urlInput.value = '';
+                fileInput.value = '';
+                fileLabel.innerHTML = originalLabelContent;
+                fileLabel.classList.remove('has-file');
+
+            } catch (err) {
+                alert('Error adding task: ' + err.message);
+            }
+        };
+        reader.onerror = () => {
+            alert('Error reading file');
+        };
+        reader.readAsText(file);
+    });
+}
+
+// Manual File Input Interaction (Modal)
+const manualFileInput = document.getElementById('manual-file');
+const manualFileLabel = document.getElementById('manual-file-label');
+const manualOriginalLabel = manualFileLabel ? manualFileLabel.innerHTML : 'Choose File to Upload';
+
+if (manualFileInput && manualFileLabel) {
+    manualFileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            const fileName = e.target.files[0].name;
+            manualFileLabel.innerHTML = `
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>${fileName}</span>
+            `;
+            manualFileLabel.classList.add('has-file');
+        } else {
+            manualFileLabel.innerHTML = manualOriginalLabel;
+            manualFileLabel.classList.remove('has-file');
+        }
+    });
+}
 
 async function deleteTask(id) {
     if (!confirm('Are you sure you want to delete this task?')) return;

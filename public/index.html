@@ -5,71 +5,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Automation Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
+    <header>
+        <h1>Form Automation Assistant</h1>
+        <p>MCP Controlled Queue System</p>
+    </header>
+
     <div class="container">
-        <header>
-            <h1>Form Automation Dashboard</h1>
-            <p>MCP Controlled Queue System</p>
-        </header>
+        <main class="dashboard-grid">
+            <!-- Left Sidebar: Add Task -->
+            <aside class="sidebar">
+                <div class="input-section glass-panel">
+                    <h2>
+                        ADD NEW TASK
+                    </h2>
+                    <form id="add-task-form">
+                        <div class="form-group">
+                            <label for="task-url">Target URL</label>
+                            <input type="url" id="task-url" required placeholder="https://example.com/form">
+                        </div>
 
-        <main>
-            <div class="input-section">
-                <h2>Add New Task</h2>
-                <form id="add-task-form">
-                    <div class="form-group">
-                        <label for="task-url">Form URL</label>
-                        <input type="url" id="task-url" required placeholder="http://localhost:3000/test-form.html">
+                        <div class="form-group">
+                            <label>Form Data (JSON)</label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" id="task-file" accept=".json" required class="file-input-hidden">
+                                <label for="task-file" class="file-upload-label" id="file-label-text">
+                                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                    </svg>
+                                    <span>Choose JSON File</span>
+                                </label>
+                            </div>
+                            <p class="help-text">Upload configuration file.</p>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%">
+                            Add Task
+                        </button>
+                    </form>
+                </div>
+            </aside>
+
+            <!-- Right Content: Stats & List -->
+            <div class="main-content">
+                <div class="stats-cards">
+                    <div class="card glass-panel">
+                        <h3>Total</h3>
+                        <span id="total-tasks">0</span>
                     </div>
-                    <div class="form-group">
-                        <label for="task-file">Form Data JSON File</label>
-                        <input type="file" id="task-file" accept=".json" required>
-                        <p class="help-text">Upload a JSON file containing the form fields.</p>
+                    <div class="card glass-panel" style="--card-color: #818cf8;">
+                        <h3>Running</h3>
+                        <span id="processing-tasks">0</span>
                     </div>
-                    <button type="submit" class="btn-primary">Add Task</button>
-                </form>
-            </div>
+                    <div class="card glass-panel" style="--card-color: #34d399;">
+                        <h3>Done</h3>
+                        <span id="completed-tasks">0</span>
+                    </div>
+                    <div class="card glass-panel" style="--card-color: #f87171;">
+                        <h3>Failed</h3>
+                        <span id="failed-tasks">0</span>
+                    </div>
+                </div>
 
-            <div class="stats-cards">
-                <div class="card">
-                    <h3>Total Tasks</h3>
-                    <span id="total-tasks">0</span>
+                <div class="task-list-container glass-panel">
+                    <h2>Active Queue</h2>
+                    <table id="task-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>URL</th>
+                                <th>Status</th>
+                                <th>Created At</th>
+                                <th>Result/Error</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="task-body">
+                            <!-- Tasks will be inserted here -->
+                        </tbody>
+                    </table>
                 </div>
-                <div class="card">
-                    <h3>Processing</h3>
-                    <span id="processing-tasks">0</span>
-                </div>
-                <div class="card">
-                    <h3>Completed</h3>
-                    <span id="completed-tasks">0</span>
-                </div>
-                <div class="card">
-                    <h3>Failed</h3>
-                    <span id="failed-tasks">0</span>
-                </div>
-            </div>
-
-            <div class="task-list-container">
-                <h2>Task Queue</h2>
-                <table id="task-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>URL</th>
-                            <th>Status</th>
-                            <th>Created At</th>
-                            <th>Result/Error</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="task-body">
-                        <!-- Tasks will be inserted here -->
-                    </tbody>
-                </table>
             </div>
         </main>
     </div>
@@ -80,8 +103,17 @@
             <p id="upload-message">A task requires a file upload.</p>
             <form id="file-upload-form">
                 <div class="form-group">
-                    <label for="manual-file">Select File (PDF, JPEG, PNG)</label>
-                    <input type="file" id="manual-file" required>
+                    <label>Select File (PDF, JPEG, PNG)</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="manual-file" required class="file-input-hidden">
+                        <label for="manual-file" class="file-upload-label" id="manual-file-label">
+                            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
+                            <span>Choose File to Upload</span>
+                        </label>
+                    </div>
                 </div>
                 <div class="modal-actions">
                     <button type="submit" class="btn-primary">Upload & Resume</button>
